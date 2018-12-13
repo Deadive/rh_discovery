@@ -8,9 +8,9 @@
 RELEASE=$(cat /etc/*release | grep -m 1 release)
 VERSION=$(cat /etc/*release | grep -m 1 release | grep -o [4-7] | head -1)
 MDATE=$(date +%F"_"%T)
-OUTPUT=RH_discover_${MDATE}
+OUTPUT=/var/tmp/rh_discover/RH_discover_${MDATE}
 ERROR_LOG=rh_discovery_log_${MDATE}
-HEADER="======================================"
+HEADER="================================================================"
 #Define functions
 systemINFO () {
 echo $HEADER
@@ -138,7 +138,7 @@ if [ $VERSION -eq 7 ]
     systemctl --no-pager list-units -t target
     echo ""
     echo $HEADER
-    echo "List of of services associated with the multi-user.target"
+    echo "List of of services associated with the DEFAULT systemd target"
     echo $HEADER
     systemctl --no-pager list-dependencies $DEFAULT_RUN_LEVEL
     echo ""
@@ -206,6 +206,10 @@ rpm -qa
 echo ""
 }
 #Start of script
+if [ ! -d /var/tmp/rh_discover ]
+  then
+    mkdir -p /var/tmp/rh_discover
+fi
 systemINFO >> $OUTPUT 2>> $ERROR_LOG
 diskFilesystemINFO >> $OUTPUT 2>> $ERROR_LOG
 service&processINFO >> $OUTPUT 2>> $ERROR_LOG
